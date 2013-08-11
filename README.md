@@ -1,26 +1,28 @@
 Conway's Game of Life
 ---------------------
 
+> _This is not funny. It's about life and death..._
+
+
 **About this repo**
 
-+ Conway's Game of Life written in JavaScript.
++ Conway's Game of Life, written in JavaScript.
 + This project is released under the [MIT license](http://opensource.org/licenses/MIT).
 
 
 **About the game**
 
-+ The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970.
++ [The Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life), also known simply as Life, is a cellular automaton devised by the British mathematician [John Horton Conway](http://en.wikipedia.org/wiki/John_Horton_Conway) in 1970.
 + The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input.
 + One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
 
-Rules:
 
-1. Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-2. Any live cell with two or three live neighbours lives on to the next generation.
-3. Any live cell with more than three live neighbours dies, as if by overcrowding.
-4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+**Rules of the game**
 
-+ This is not a funny game. This is about life and death.
++ Any live cell with fewer than two live neighbours dies, as if caused by under-population.
++ Any live cell with two or three live neighbours lives on to the next generation.
++ Any live cell with more than three live neighbours dies, as if by overcrowding.
++ Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
 
 **Read the blog post**
