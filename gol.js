@@ -3,8 +3,9 @@ void function(window, document, undefined) {
   // ES5 strict mode
   "use strict";
 
-  var UNIT = 3;   // cell width and height
-  var SIDE = 200; // number of cells vertically and horizontally
+  var UNIT = 3;     // cell width and height
+  var WIDTH = 300;  // number of cells horizontally
+  var HEIGHT = 200; // number of cells vertically
 
   var state = [];
   var flag = false;
@@ -36,10 +37,10 @@ void function(window, document, undefined) {
   var spawn = function() {
     var next = [];
     var neighbors = 0;
-    for(var i = 0; i < SIDE + 2; i++) {
+    for(var i = 0; i < HEIGHT + 2; i++) {
       next[i] = [];
-      for(var j = 0; j < SIDE + 2; j++) {
-        if(i === 0 || j === 0 || i === SIDE+1 || j === SIDE+1) {
+      for(var j = 0; j < WIDTH + 2; j++) {
+        if(i === 0 || j === 0 || i === HEIGHT+1 || j === WIDTH+1) {
           // shim elements
           next[i][j] = 0;
         } else {
@@ -65,9 +66,9 @@ void function(window, document, undefined) {
   // TODO: Use CANVAS instead of DIVs.
   var draw = function() {
     var index;
-    for(var i = 1; i < SIDE + 1; i++) {
-      for(var j = 1; j < SIDE + 1; j++) {
-        index = SIDE * (i-1) + (j-1);
+    for(var i = 1; i < HEIGHT + 1; i++) {
+      for(var j = 1; j < WIDTH + 1; j++) {
+        index = WIDTH * (i-1) + (j-1);
         cells[index].className = (state[i][j] === 1) ? 'alive' : '';
       }
     }
@@ -79,8 +80,8 @@ void function(window, document, undefined) {
   // Generate random initial cells and draw them.
   var randomize = function() {
     flag = false;
-    for(var i = 1; i < SIDE + 1; i++) {
-      for(var j = 1; j < SIDE + 1; j++) {
+    for(var i = 1; i < HEIGHT + 1; i++) {
+      for(var j = 1; j < WIDTH + 1; j++) {
         state[i][j] = (Math.random() < 0.8) ? 0 : 1;
       }
     }
@@ -98,16 +99,23 @@ void function(window, document, undefined) {
     flag = false;
   };
 
+  // Next generation.
+  var stepGame = function() {
+    flag = false;
+    spawn();
+  };
+
   // Initialize the canvas.
   // TODO: Use CANVAS instead of DIVs.
   var init = function() {
     var gol = document.getElementById('gol');
-    gol.style.width = gol.style.height = UNIT * SIDE + 'px';
-    gol.innerHTML = (new Array(SIDE * SIDE + 1)).join('<span></span>');
+    gol.style.width = UNIT * WIDTH + 'px';
+    gol.style.height = UNIT * HEIGHT + 'px';
+    gol.innerHTML = (new Array(WIDTH * HEIGHT + 1)).join('<span></span>');
     cells = gol.children;
-    for(var i = 0; i < SIDE + 2; i++) {
+    for(var i = 0; i < HEIGHT + 2; i++) {
       state[i] = [];
-      for(var j = 0; j < SIDE + 2; j++) {
+      for(var j = 0; j < WIDTH + 2; j++) {
         state[i][j] = 0;
       }
     }
@@ -116,7 +124,7 @@ void function(window, document, undefined) {
   addEvent(random, 'click', randomize);
   addEvent(start, 'click', startGame);
   addEvent(stop, 'click', stopGame);
-  addEvent(step, 'click', spawn);
+  addEvent(step, 'click', stepGame);
   addEvent(window, 'load', init);
 
 }(window, document);
