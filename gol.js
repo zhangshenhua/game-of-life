@@ -3,128 +3,200 @@ void function(window, document, undefined) {
   // ES5 strict mode
   "use strict";
 
-  var UNIT = 3;     // cell width and height
-  var WIDTH = 300;  // number of cells horizontally
-  var HEIGHT = 200; // number of cells vertically
+  var height = 130;   // number of cells vertically
+  var width = 240;    // number of cells horizontally
+  var size = 4;       // width and height of a cell
+  var gap = 1;        // space between each cell
+  var density = 0.2;  // density of random live cells
 
-  var state = [];
-  var flag = false;
-  var cells;
+  var cells = [];     // state of every cell
+  var evolve = false; // state of evolution
+
   var random = document.getElementById('random');
   var start = document.getElementById('start');
   var stop = document.getElementById('stop');
   var step = document.getElementById('step');
+  var clean = document.getElementById('clean');
+  var world = document.getElementById('world');
+  var context = world.getContext('2d');
 
-  // Cross-browser compatible event handler.
-  var addEvent = function(element, type, handler) {
-    if(element.addEventListener) {
-      addEvent = function(element, type, handler) {
-        element.addEventListener(type, handler, false);
-      };
-    } else if(element.attachEvent) {
-      addEvent = function(element, type, handler) {
-        element.attachEvent('on' + type, handler);
-      };
-    } else {
-      addEvent = function(element, type, handler) {
-        element['on' + type] = handler;
-      };
+  // Initialize all cells as dead.
+  var initializeCells = function() {
+    for(var i = 0; i < height + 2; i++) {
+      cells[i] = [];
+      for(var j = 0; j < width + 2; j++) {
+        cells[i][j] = 0;
+      }
     }
-    addEvent(element, type, handler);
   };
 
-  // Calculate the next generation of cells and draw them.
-  var spawn = function() {
+  // Evolve the next generation of cells and draw them.
+  var evolveCells = function() {
     var next = [];
-    var neighbors = 0;
-    for(var i = 0; i < HEIGHT + 2; i++) {
+    var neighbors;
+
+    for(var i = 0; i < height + 2; i++) {
       next[i] = [];
-      for(var j = 0; j < WIDTH + 2; j++) {
-        if(i === 0 || j === 0 || i === HEIGHT+1 || j === WIDTH+1) {
-          // shim elements
-          next[i][j] = 0;
+      for(var j = 0; j < width + 2; j++) {
+        if(i === 0 || j === 0 || i === height+1 || j === width+1) {
+          next[i][j] = 0; // shim cells
         } else {
-          neighbors = state[i-1][j-1] + state[i-1][j] + state[i-1][j+1] + state[i][j-1] + state[i][j+1] + state[i+1][j-1] + state[i+1][j] + state[i+1][j+1];
-          if(state[i][j] === 0 && neighbors === 3) {
-            // this cell is dead, but will be alive in next round
+          // Get the number of live neighbors (8 neighbors in total).
+          neighbors = cells[i-1][j-1] + cells[i-1][j] + cells[i-1][j+1] + cells[i][j-1] + cells[i][j+1] + cells[i+1][j-1] + cells[i+1][j] + cells[i+1][j+1];
+
+          if(cells[i][j] === 0 && neighbors === 3) {
+            // Any dead cell with exactly 3 live neighbors becomes a live cell, as if by reproduction.
             next[i][j] = 1;
-          } else if(state[i][j] === 1 && neighbors > 1 && neighbors < 4) {
-            // this cell is alive, and will keep alive in next round
+          } else if(cells[i][j] === 1 && neighbors > 1 && neighbors < 4) {
+            // Any live cell with 2 or 3 live neighbors lives on to the next generation.
             next[i][j] = 1;
           } else {
-            // dead cell in next round
+            // Live cell dies, caused by under-population (fewer than 2 live neighbors) or overcrowding (more than 3 live neighbors).
+            // Dead cell remains dead.
             next[i][j] = 0;
           }
         }
       }
     }
-    state = next;
-    draw();
+
+    cells = next;
+    placeCells();
   };
 
-  // Draw the cells in the canvas.
-  // TODO: Use CANVAS instead of DIVs.
-  var draw = function() {
-    var index;
-    for(var i = 1; i < HEIGHT + 1; i++) {
-      for(var j = 1; j < WIDTH + 1; j++) {
-        index = WIDTH * (i-1) + (j-1);
-        cells[index].className = (state[i][j] === 1) ? 'alive' : '';
+  // Place the cells in the world.
+  var placeCells = function() {
+    context.clearRect(0, 0, (size + gap) * width - gap, (size + gap) * height - gap);
+
+    for(var i = 1; i < height + 1; i++) {
+      for(var j = 1; j < width + 1; j++) {
+        if(cells[i][j] === 1) {
+          context.fillRect((size + gap) * (j-1), (size + gap) * (i-1), size, size);
+        }
       }
     }
-    if(flag) {
-      setTimeout(spawn, 50);
+
+    // Go on next generation.
+    if(evolve) {
+      setTimeout(evolveCells, 80);
     }
   };
 
   // Generate random initial cells and draw them.
-  var randomize = function() {
-    flag = false;
-    for(var i = 1; i < HEIGHT + 1; i++) {
-      for(var j = 1; j < WIDTH + 1; j++) {
-        state[i][j] = (Math.random() < 0.8) ? 0 : 1;
+  var randomizeGame = function() {
+    evolve = false;
+
+    for(var i = 0; i < height + 2; i++) {
+      cells[i] = [];
+      for(var j = 0; j < width + 2; j++) {
+        if(i === 0 || j === 0 || i === height+1 || j === width+1) {
+          cells[i][j] = 0; // shim cells
+        } else {
+          cells[i][j] = (Math.random() < density) ? 1 : 0;
+        }
       }
     }
-    draw();
+
+    placeCells();
   };
 
-  // Start to evolution.
+  // Start evolution continuously.
   var startGame = function() {
-    flag = true;
-    spawn();
+    evolve = true;
+    random.disabled = true;
+    start.disabled = true;
+    stop.disabled = false;
+    step.disabled = true;
+    clean.disabled = true;
+    evolveCells();
   };
 
   // Stop evolution.
   var stopGame = function() {
-    flag = false;
+    evolve = false;
+    random.disabled = false;
+    start.disabled = false;
+    stop.disabled = true;
+    step.disabled = false;
+    clean.disabled = false;
   };
 
-  // Next generation.
+  // Spawn one generation.
   var stepGame = function() {
-    flag = false;
-    spawn();
+    evolve = false;
+    evolveCells();
   };
 
-  // Initialize the canvas.
-  // TODO: Use CANVAS instead of DIVs.
-  var init = function() {
-    var gol = document.getElementById('gol');
-    gol.style.width = UNIT * WIDTH + 'px';
-    gol.style.height = UNIT * HEIGHT + 'px';
-    gol.innerHTML = (new Array(WIDTH * HEIGHT + 1)).join('<span></span>');
-    cells = gol.children;
-    for(var i = 0; i < HEIGHT + 2; i++) {
-      state[i] = [];
-      for(var j = 0; j < WIDTH + 2; j++) {
-        state[i][j] = 0;
-      }
+  // Wipe all cells in the world.
+  var cleanGame = function() {
+    evolve = false;
+    initializeCells();
+    context.clearRect(0, 0, (size + gap) * width - gap, (size + gap) * height - gap);
+  };
+
+  // Impact cells during the game, and see how can we affect the evolution.
+  var impactGame = function(e) {
+    // Only do this when the world is paused.
+    if(evolve) {
+      return;
+    }
+
+    var offset = world.getBoundingClientRect();
+    var x = (e.clientX - offset.left) % (size + gap); // offsetX in a cell
+    var y = (e.clientY - offset.top) % (size + gap);  // offsetY in a cell
+
+    // Actually clicked on the cell rather than gap.
+    if(x <= size && y <= size) {
+      var i = Math.floor((e.clientY - offset.top) / (size + gap)) + 1;  // index X in the world
+      var j = Math.floor((e.clientX - offset.left) / (size + gap)) + 1; // index Y in the world
+      // Make dead lives, make live dies.
+      cells[i][j] = 1 - cells[i][j];
+      placeCells();
     }
   };
 
-  addEvent(random, 'click', randomize);
-  addEvent(start, 'click', startGame);
-  addEvent(stop, 'click', stopGame);
-  addEvent(step, 'click', stepGame);
-  addEvent(window, 'load', init);
+  // Initialize the game.
+  var init = function() {
+    // Prepare the world.
+    world.width = (size + gap) * width - gap;
+    world.height = (size + gap) * height - gap;
+    world.addEventListener('click', impactGame, false);
+    context.fillStyle = '#f0f0f0';
+
+    initializeCells();
+
+    // Add other dirty listeners.
+    document.getElementById('height').addEventListener('change', function() {
+      height = parseInt(this.value);
+    }, false);
+    document.getElementById('width').addEventListener('change', function() {
+      width = parseInt(this.value);
+    }, false);
+    document.getElementById('size').addEventListener('change', function() {
+      size = parseInt(this.value);
+    }, false);
+    document.getElementById('gap').addEventListener('change', function() {
+      gap = parseInt(this.value);
+    }, false);
+    document.getElementById('new').addEventListener('click', function() {
+      world.width = (size + gap) * width - gap;
+      world.height = (size + gap) * height - gap;
+      context.fillStyle = '#f0f0f0';
+      cleanGame();
+    }, false);
+    document.getElementById('reset').addEventListener('click', function() {
+      // TODO: no big deal...
+    }, false);
+    document.getElementById('density').addEventListener('change', function() {
+      density = parseFloat(this.value);
+      document.getElementById('figure').innerHTML = density.toFixed(2);
+    }, false);
+    random.addEventListener('click', randomizeGame, false);
+    start.addEventListener('click', startGame, false);
+    stop.addEventListener('click', stopGame, false);
+    step.addEventListener('click', stepGame, false);
+    clean.addEventListener('click', cleanGame, false);
+  };
+
+  window.addEventListener('load', init, false);
 
 }(window, document);
