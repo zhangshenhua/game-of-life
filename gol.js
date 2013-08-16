@@ -10,13 +10,16 @@ void function(window, document, undefined) {
   var size = 4;       // width and height of a cell
   var gap = 1;        // space between each cell
   var density = 0.2;  // density of random live cells
+  var interval = 80;  // time cost for evolution
 
   var $height = document.getElementById('height');
   var $width = document.getElementById('width');
   var $size = document.getElementById('size');
   var $gap = document.getElementById('gap');
   var $density = document.getElementById('density');
-  var $figure = document.getElementById('figure');
+  var $figure1 = document.getElementById('figure1');
+  var $interval = document.getElementById('interval');
+  var $figure2 = document.getElementById('figure2');
   var $new = document.getElementById('new');
   var $reset = document.getElementById('reset');
   var $random = document.getElementById('random');
@@ -85,7 +88,7 @@ void function(window, document, undefined) {
 
     // Go on next generation.
     if(evolve) {
-      setTimeout(evolveCells, 80);
+      setTimeout(evolveCells, interval);
     }
   };
 
@@ -96,6 +99,7 @@ void function(window, document, undefined) {
     $size.disabled = evolve;
     $gap.disabled = evolve;
     $density.disabled = evolve;
+    $interval.disabled = evolve;
     $new.disabled = evolve;
     $reset.disabled = evolve;
     $random.disabled = evolve;
@@ -178,24 +182,31 @@ void function(window, document, undefined) {
     // Add dirty listeners.
     $density.addEventListener('change', function() {
       density = parseFloat($density.value);
-      $figure.innerHTML = density.toFixed(2);
+      $figure1.innerHTML = density.toFixed(2);
+    }, false);
+
+    $interval.addEventListener('change', function() {
+      interval = parseInt($interval.value, 10);
+      $figure2.innerHTML = interval;
     }, false);
 
     $new.addEventListener('click', function() {
-      height = parseInt($height.value);
-      width = parseInt($width.value);
-      size = parseInt($size.value);
-      gap = parseInt($gap.value);
+      height = parseInt($height.value, 10);
+      width = parseInt($width.value, 10);
+      size = parseInt($size.value, 10);
+      gap = parseInt($gap.value, 10);
       cleanGame();
     }, false);
 
     $reset.addEventListener('click', function() {
-      $height.value = height = parseInt($height.initial);
-      $width.value = width = parseInt($width.initial);
-      $size.value = size = parseInt($size.initial);
-      $gap.value = gap = parseInt($gap.initial);
+      $height.value = height = parseInt($height.initial, 10);
+      $width.value = width = parseInt($width.initial, 10);
+      $size.value = size = parseInt($size.initial, 10);
+      $gap.value = gap = parseInt($gap.initial, 10);
       $density.value = density = parseFloat($density.initial);
-      $figure.innerHTML = density.toFixed(2);
+      $figure1.innerHTML = density.toFixed(2);
+      $interval.value = interval = parseInt($interval.initial, 10);
+      $figure2.innerHTML = interval;
       cleanGame();
     }, false);
 
@@ -206,13 +217,15 @@ void function(window, document, undefined) {
     $clean.addEventListener('click', cleanGame, false);
     $world.addEventListener('click', impactGame, false);
 
-    // Store initial values.
+    // Set initial values.
     $height.value = $height.initial = height;
     $width.value = $width.initial = width;
     $size.value = $size.initial = size;
     $gap.value = $gap.initial = gap;
     $density.value = $density.initial = density;
-    $figure.innerHTML = density.toFixed(2);
+    $figure1.innerHTML = density.toFixed(2);
+    $interval.value = $interval.initial = interval;
+    $figure2.innerHTML = interval;
 
     // Prepare the world.
     cleanGame();
