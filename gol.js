@@ -3,22 +3,30 @@ void function(window, document, undefined) {
   // ES5 strict mode
   "use strict";
 
-  var height = 130;   // number of cells vertically
-  var width = 240;    // number of cells horizontally
+  var cells = [];     // state of every cell
+  var evolve = false; // state of evolution
+  var height = 120;   // number of cells vertically
+  var width = 200;    // number of cells horizontally
   var size = 4;       // width and height of a cell
   var gap = 1;        // space between each cell
   var density = 0.2;  // density of random live cells
 
-  var cells = [];     // state of every cell
-  var evolve = false; // state of evolution
+  var $height = document.getElementById('height');
+  var $width = document.getElementById('width');
+  var $size = document.getElementById('size');
+  var $gap = document.getElementById('gap');
+  var $density = document.getElementById('density');
+  var $figure = document.getElementById('figure');
+  var $new = document.getElementById('new');
+  var $reset = document.getElementById('reset');
+  var $random = document.getElementById('random');
+  var $start = document.getElementById('start');
+  var $stop = document.getElementById('stop');
+  var $step = document.getElementById('step');
+  var $clean = document.getElementById('clean');
 
-  var random = document.getElementById('random');
-  var start = document.getElementById('start');
-  var stop = document.getElementById('stop');
-  var step = document.getElementById('step');
-  var clean = document.getElementById('clean');
-  var world = document.getElementById('world');
-  var context = world.getContext('2d');
+  var $world = document.getElementById('world');
+  var context = $world.getContext('2d');
 
   // Initialize all cells as dead.
   var initializeCells = function() {
@@ -81,6 +89,22 @@ void function(window, document, undefined) {
     }
   };
 
+  // Toggle form elements' state
+  var toggleState = function() {
+    $height.disabled = evolve;
+    $width.disabled = evolve;
+    $size.disabled = evolve;
+    $gap.disabled = evolve;
+    $density.disabled = evolve;
+    $new.disabled = evolve;
+    $reset.disabled = evolve;
+    $random.disabled = evolve;
+    $start.disabled = evolve;
+    $stop.disabled = !evolve;
+    $step.disabled = evolve;
+    $clean.disabled = evolve;
+  };
+
   // Generate random initial cells and draw them.
   var randomizeGame = function() {
     evolve = false;
@@ -102,22 +126,14 @@ void function(window, document, undefined) {
   // Start evolution continuously.
   var startGame = function() {
     evolve = true;
-    random.disabled = true;
-    start.disabled = true;
-    stop.disabled = false;
-    step.disabled = true;
-    clean.disabled = true;
+    toggleState();
     evolveCells();
   };
 
   // Stop evolution.
   var stopGame = function() {
     evolve = false;
-    random.disabled = false;
-    start.disabled = false;
-    stop.disabled = true;
-    step.disabled = false;
-    clean.disabled = false;
+    toggleState();
   };
 
   // Spawn one generation.
@@ -130,6 +146,9 @@ void function(window, document, undefined) {
   var cleanGame = function() {
     evolve = false;
     initializeCells();
+    $world.width = (size + gap) * width - gap;
+    $world.height = (size + gap) * height - gap;
+    context.fillStyle = '#f0f0f0';
     context.clearRect(0, 0, (size + gap) * width - gap, (size + gap) * height - gap);
   };
 
@@ -140,7 +159,7 @@ void function(window, document, undefined) {
       return;
     }
 
-    var offset = world.getBoundingClientRect();
+    var offset = $world.getBoundingClientRect();
     var x = (e.clientX - offset.left) % (size + gap); // offsetX in a cell
     var y = (e.clientY - offset.top) % (size + gap);  // offsetY in a cell
 
@@ -156,45 +175,47 @@ void function(window, document, undefined) {
 
   // Initialize the game.
   var init = function() {
-    // Prepare the world.
-    world.width = (size + gap) * width - gap;
-    world.height = (size + gap) * height - gap;
-    world.addEventListener('click', impactGame, false);
-    context.fillStyle = '#f0f0f0';
+    // Add dirty listeners.
+    $density.addEventListener('change', function() {
+      density = parseFloat($density.value);
+      $figure.innerHTML = density.toFixed(2);
+    }, false);
 
-    initializeCells();
-
-    // Add other dirty listeners.
-    document.getElementById('height').addEventListener('change', function() {
-      height = parseInt(this.value);
-    }, false);
-    document.getElementById('width').addEventListener('change', function() {
-      width = parseInt(this.value);
-    }, false);
-    document.getElementById('size').addEventListener('change', function() {
-      size = parseInt(this.value);
-    }, false);
-    document.getElementById('gap').addEventListener('change', function() {
-      gap = parseInt(this.value);
-    }, false);
-    document.getElementById('new').addEventListener('click', function() {
-      world.width = (size + gap) * width - gap;
-      world.height = (size + gap) * height - gap;
-      context.fillStyle = '#f0f0f0';
+    $new.addEventListener('click', function() {
+      height = parseInt($height.value);
+      width = parseInt($width.value);
+      size = parseInt($size.value);
+      gap = parseInt($gap.value);
       cleanGame();
     }, false);
-    document.getElementById('reset').addEventListener('click', function() {
-      // TODO: no big deal...
+
+    $reset.addEventListener('click', function() {
+      $height.value = height = parseInt($height.initial);
+      $width.value = width = parseInt($width.initial);
+      $size.value = size = parseInt($size.initial);
+      $gap.value = gap = parseInt($gap.initial);
+      $density.value = density = parseFloat($density.initial);
+      $figure.innerHTML = density.toFixed(2);
+      cleanGame();
     }, false);
-    document.getElementById('density').addEventListener('change', function() {
-      density = parseFloat(this.value);
-      document.getElementById('figure').innerHTML = density.toFixed(2);
-    }, false);
-    random.addEventListener('click', randomizeGame, false);
-    start.addEventListener('click', startGame, false);
-    stop.addEventListener('click', stopGame, false);
-    step.addEventListener('click', stepGame, false);
-    clean.addEventListener('click', cleanGame, false);
+
+    $random.addEventListener('click', randomizeGame, false);
+    $start.addEventListener('click', startGame, false);
+    $stop.addEventListener('click', stopGame, false);
+    $step.addEventListener('click', stepGame, false);
+    $clean.addEventListener('click', cleanGame, false);
+    $world.addEventListener('click', impactGame, false);
+
+    // Store initial values.
+    $height.value = $height.initial = height;
+    $width.value = $width.initial = width;
+    $size.value = $size.initial = size;
+    $gap.value = $gap.initial = gap;
+    $density.value = $density.initial = density;
+    $figure.innerHTML = density.toFixed(2);
+
+    // Prepare the world.
+    cleanGame();
   };
 
   window.addEventListener('load', init, false);
