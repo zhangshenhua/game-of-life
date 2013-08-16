@@ -229,6 +229,7 @@ void function(window, document, undefined) {
 
     // Prepare the world.
     cleanGame();
+    randomizeGame();
   };
 
   window.addEventListener('load', init, false);
