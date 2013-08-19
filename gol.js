@@ -128,7 +128,7 @@ void function(window, document, undefined) {
     cells[57][45] = 1;
     cells[58][45] = 1;
     cells[59][45] = 1;
-    cells[60][45] = 1
+    cells[60][45] = 1;
     cells[61][45] = 1;
     cells[62][46] = cells[62][47] = cells[62][48] = cells[62][49] = 1;
 
@@ -184,7 +184,7 @@ void function(window, document, undefined) {
     cells[57][94] = 1;
     cells[58][94] = 1;
     cells[59][94] = cells[59][96] = cells[59][97] = cells[59][98] = 1;
-    cells[60][94] = cells[60][98] = 1
+    cells[60][94] = cells[60][98] = 1;
     cells[61][94] = cells[61][98] = 1;
     cells[62][95] = cells[62][96] = cells[62][97] = cells[62][98] = 1;
 
@@ -258,6 +258,29 @@ void function(window, document, undefined) {
     cells[62][153] = cells[62][154] = cells[62][155] = cells[62][156] = 1;
 
     placeCells();
+  };
+
+  // Create new world with values from game setting pod.
+  var newGame = function() {
+    height = parseInt($height.value, 10);
+    width = parseInt($width.value, 10);
+    size = parseInt($size.value, 10);
+    gap = parseInt($gap.value, 10);
+    cleanGame();
+  };
+
+  // Retrieve all default values and reset the world.
+  var resetGame = function() {
+    $height.value = height = parseInt($height.initial, 10);
+    $width.value = width = parseInt($width.initial, 10);
+    $size.value = size = parseInt($size.initial, 10);
+    $gap.value = gap = parseInt($gap.initial, 10);
+    $density.value = density = parseFloat($density.initial);
+    $figure1.innerHTML = density.toFixed(2);
+    $interval.value = interval = parseInt($interval.initial, 10);
+    $figure2.innerHTML = interval;
+    $examples.value = '0';
+    cleanGame();
   };
 
   // Generate initial cells from examples.
@@ -436,7 +459,7 @@ void function(window, document, undefined) {
 
   // Initialize the game.
   var init = function() {
-    // Add dirty listeners.
+    // Add all the dirty listeners.
     $density.addEventListener('change', function() {
       density = parseFloat($density.value);
       $figure1.innerHTML = density.toFixed(2);
@@ -447,27 +470,8 @@ void function(window, document, undefined) {
       $figure2.innerHTML = interval;
     }, false);
 
-    $new.addEventListener('click', function() {
-      height = parseInt($height.value, 10);
-      width = parseInt($width.value, 10);
-      size = parseInt($size.value, 10);
-      gap = parseInt($gap.value, 10);
-      cleanGame();
-    }, false);
-
-    $reset.addEventListener('click', function() {
-      $height.value = height = parseInt($height.initial, 10);
-      $width.value = width = parseInt($width.initial, 10);
-      $size.value = size = parseInt($size.initial, 10);
-      $gap.value = gap = parseInt($gap.initial, 10);
-      $density.value = density = parseFloat($density.initial);
-      $figure1.innerHTML = density.toFixed(2);
-      $interval.value = interval = parseInt($interval.initial, 10);
-      $figure2.innerHTML = interval;
-      $examples.value = '0';
-      cleanGame();
-    }, false);
-
+    $new.addEventListener('click', newGame, false);
+    $reset.addEventListener('click', resetGame, false);
     $examples.addEventListener('change', presetGame, false);
     $random.addEventListener('click', randomizeGame, false);
     $start.addEventListener('click', startGame, false);
