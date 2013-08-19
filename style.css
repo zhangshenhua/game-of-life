@@ -32,6 +32,12 @@ input {
   display: block;
 }
 
+input[type=checkbox] {
+  margin: 5px 5px 10px 0;
+  width: auto;
+  display: inline-block;
+}
+
 select {
   margin: 5px 0 10px;
   width: 142px;

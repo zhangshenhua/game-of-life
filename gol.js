@@ -11,14 +11,15 @@ void function(window, document, undefined) {
   // ES5 strict mode
   "use strict";
 
-  var cells = [];     // state of every cell
-  var evolve = false; // state of evolution
-  var height = 120;   // number of cells vertically
-  var width = 200;    // number of cells horizontally
-  var size = 4;       // width and height of a cell
-  var gap = 1;        // space between each cell
-  var density = 0.2;  // density of random live cells
-  var interval = 80;  // time cost for evolution
+  var cells = [];             // state of every cell
+  var evolve = false;         // state of evolution
+  var multithreading = false; // state of multithreading (web worker)
+  var height = 120;           // number of cells vertically
+  var width = 200;            // number of cells horizontally
+  var size = 4;               // width and height of a cell
+  var gap = 1;                // space between each cell
+  var density = 0.2;          // density of random live cells
+  var interval = 80;          // time cost for evolution
 
   var $height = document.getElementById('height');
   var $width = document.getElementById('width');
@@ -28,6 +29,7 @@ void function(window, document, undefined) {
   var $figure1 = document.getElementById('figure1');
   var $interval = document.getElementById('interval');
   var $figure2 = document.getElementById('figure2');
+  var $multithreading = document.getElementById('multithreading');
   var $examples = document.getElementById('examples');
   var $new = document.getElementById('new');
   var $reset = document.getElementById('reset');
@@ -39,6 +41,7 @@ void function(window, document, undefined) {
 
   var $world = document.getElementById('world');
   var context = $world.getContext('2d');
+  var worker;
 
   // Initialize all cells as dead.
   var initializeCells = function() {
@@ -52,35 +55,45 @@ void function(window, document, undefined) {
 
   // Evolve the next generation of cells and draw them.
   var evolveCells = function() {
-    var next = [];
-    var neighbors;
+    if(multithreading) {
+      // Use Worker to do the calculation.
+      worker.onmessage = function(e) {
+        cells = e.data;
+        placeCells();
+      };
+      worker.postMessage(cells);
+    } else {
+      var next = [];
+      var neighbors;
 
-    for(var i = 0; i < height + 2; i++) {
-      next[i] = [];
-      for(var j = 0; j < width + 2; j++) {
-        if(i === 0 || j === 0 || i === height+1 || j === width+1) {
-          next[i][j] = 0; // shim cells
-        } else {
-          // Get the number of live neighbors (8 neighbors in total).
-          neighbors = cells[i-1][j-1] + cells[i-1][j] + cells[i-1][j+1] + cells[i][j-1] + cells[i][j+1] + cells[i+1][j-1] + cells[i+1][j] + cells[i+1][j+1];
-
-          if(cells[i][j] === 0 && neighbors === 3) {
-            // Any dead cell with exactly 3 live neighbors becomes a live cell, as if by reproduction.
-            next[i][j] = 1;
-          } else if(cells[i][j] === 1 && neighbors > 1 && neighbors < 4) {
-            // Any live cell with 2 or 3 live neighbors lives on to the next generation.
-            next[i][j] = 1;
+      for(var i = 0; i < height + 2; i++) {
+        next[i] = [];
+        for(var j = 0; j < width + 2; j++) {
+          if(i === 0 || j === 0 || i === height+1 || j === width+1) {
+            next[i][j] = 0; // shim cells
           } else {
-            // Live cell dies, caused by under-population (fewer than 2 live neighbors) or overcrowding (more than 3 live neighbors).
-            // Dead cell remains dead.
-            next[i][j] = 0;
+            // Get the number of live neighbors (8 neighbors in total).
+            neighbors = cells[i-1][j-1] + cells[i-1][j] + cells[i-1][j+1] + cells[i][j-1] + cells[i][j+1] + cells[i+1][j-1] + cells[i+1][j] + cells[i+1][j+1];
+
+            if(cells[i][j] === 0 && neighbors === 3) {
+              // Any dead cell with exactly 3 live neighbors becomes a live cell, as if by reproduction.
+              next[i][j] = 1;
+            } else if(cells[i][j] === 1 && neighbors > 1 && neighbors < 4) {
+              // Any live cell with 2 or 3 live neighbors lives on to the next generation.
+              next[i][j] = 1;
+            } else {
+              // Live cell dies, caused by under-population (fewer than 2 live neighbors) or overcrowding (more than 3 live neighbors).
+              // Dead cell remains dead.
+              next[i][j] = 0;
+            }
           }
         }
       }
-    }
 
-    cells = next;
-    placeCells();
+      cells = next;
+      placeCells();
+
+    }
   };
 
   // Place the cells in the world.
@@ -109,6 +122,7 @@ void function(window, document, undefined) {
     $gap.disabled = evolve;
     $density.disabled = evolve;
     $interval.disabled = evolve;
+    $multithreading.disabled = !worker || evolve;
     $examples.disabled = evolve;
     $new.disabled = evolve;
     $reset.disabled = evolve;
@@ -470,6 +484,10 @@ void function(window, document, undefined) {
       $figure2.innerHTML = interval;
     }, false);
 
+    $multithreading.addEventListener('change', function() {
+      multithreading = $multithreading.checked;
+    }, false);
+
     $new.addEventListener('click', newGame, false);
     $reset.addEventListener('click', resetGame, false);
     $examples.addEventListener('change', presetGame, false);
@@ -489,6 +507,13 @@ void function(window, document, undefined) {
     $figure1.innerHTML = density.toFixed(2);
     $interval.value = $interval.initial = interval;
     $figure2.innerHTML = interval;
+
+    // Try to initialize a worker.
+    try {
+      worker = new Worker('evolution.js');
+    } catch(ex) {
+      $multithreading.disabled = true;
+    };
 
     // Prepare the world.
     cleanGame();
