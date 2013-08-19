@@ -32,6 +32,12 @@ input {
   display: block;
 }
 
+select {
+  margin: 5px 0 10px;
+  width: 142px;
+  display: block;
+}
+
 button {
   font-family: Georgia, serif;
   font-size: 16px;
