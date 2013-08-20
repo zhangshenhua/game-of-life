@@ -57,10 +57,6 @@ void function(window, document, undefined) {
   var evolveCells = function() {
     if(multithreading) {
       // Use Worker to do the calculation.
-      worker.onmessage = function(e) {
-        cells = e.data;
-        placeCells();
-      };
       worker.postMessage(cells);
     } else {
       var next = [];
@@ -92,7 +88,6 @@ void function(window, document, undefined) {
 
       cells = next;
       placeCells();
-
     }
   };
 
@@ -511,6 +506,10 @@ void function(window, document, undefined) {
     // Try to initialize a worker.
     try {
       worker = new Worker('evolution.js');
+      worker.onmessage = function(e) {
+        cells = e.data;
+        placeCells();
+      };
     } catch(ex) {
       $multithreading.disabled = true;
     };
