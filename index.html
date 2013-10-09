@@ -25,25 +25,7 @@
       <input type="range" id="interval" step="40" min="40" max="1000" />
       <input type=checkbox id="multithreading" /> <label for="multithreading">Use web worker</label>
       <label for="examples">Examples of patterns:</label>
-      <select id="examples">
-        <option value="0">Silence</option>
-        <option value="1">Still Lifes</option>
-        <option value="2">Small Exploder</option>
-        <option value="3">High Life</option>
-        <option value="4">Oscillators</option>
-        <option value="5">Exploder</option>
-        <option value="6">10 Cell Row</option>
-        <option value="7">Flower</option>
-        <option value="8">Glider</option>
-        <option value="9">Lightweight Spaceship</option>
-        <option value="10">The R-pentomino</option>
-        <option value="11">Die Hard</option>
-        <option value="12">Acron</option>
-        <option value="13">Gosper's Glider Gun</option>
-        <option value="14">Infinite 1</option>
-        <option value="15">Infinite 2</option>
-        <option value="16">Infinite 3</option>
-      </select>
+      <select id="examples"></select>
       <button id="random">Random</button>
       <button id="start">Start</button>
       <button id="stop" disabled>Stop</button>
@@ -56,6 +38,7 @@
       <h2>Conway's Game of Life</h2>
       <canvas id="world"></canvas>
     </section>
+    <script src="lifes.js"></script>
     <script src="gol.js"></script>
   </body>
 </html>
