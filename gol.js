@@ -307,7 +307,29 @@ void function(window, document, undefined) {
       case '2': // Small Exploder
         cells[50][51] = cells[51][50] = cells[51][51] = cells[51][52] = cells[52][50] = cells[52][52] = cells[53][51] = 1;
         break;
-      case '3': // Oscillators: blinker (period 2), toad (period 2), beacon (period 2), pulsar (period 3), tumbler.
+      case '3': // High Life
+        cells[50][80] = cells[50][81] = cells[50][82] = 1;
+        cells[51][79] = cells[51][82] = 1;
+        cells[52][78] = cells[52][82] = 1;
+        cells[53][78] = cells[53][81] = 1;
+        cells[54][78] = cells[54][79] = cells[54][80] = 1;
+        cells[54][84] = cells[54][85] = cells[54][86] = 1;
+        cells[55][83] = cells[55][86] = 1;
+        cells[56][82] = cells[56][86] = 1;
+        cells[57][82] = cells[57][85] = 1;
+        cells[58][82] = cells[58][83] = cells[58][84] = 1;
+        cells[58][88] = cells[58][89] = cells[58][90] = 1;
+        cells[59][87] = cells[59][90] = 1;
+        cells[60][86] = cells[60][90] = 1;
+        cells[61][86] = cells[61][89] = 1;
+        cells[62][86] = cells[62][87] = cells[62][88] = 1;
+        cells[62][92] = cells[62][93] = cells[62][94] = 1;
+        cells[63][91] = cells[63][94] = 1;
+        cells[64][90] = cells[64][94] = 1;
+        cells[65][90] = cells[65][93] = 1;
+        cells[66][90] = cells[66][91] = cells[66][92] = 1;
+        break;
+      case '4': // Oscillators: blinker (period 2), toad (period 2), beacon (period 2), pulsar (period 3), tumbler.
         cells[30][40] = cells[30][41] = cells[30][42] = 1;
         cells[30][81] = cells[30][82] = cells[30][83] = cells[31][80] = cells[31][81] = cells[31][82] = 1;
         cells[30][120] = cells[30][121] = cells[31][120] = cells[32][123] = cells[33][122] = cells[33][123] = 1;
@@ -330,39 +352,39 @@ void function(window, document, undefined) {
         cells[74][91] = cells[74][92] = cells[74][94] = cells[74][95] = 1;
         cells[75][91] = cells[75][95] = 1;
         break;
-      case '4': // Exploder
+      case '5': // Exploder
         cells[50][50] = cells[50][52] = cells[50][54] = 1;
         cells[51][50] = cells[51][54] = 1;
         cells[52][50] = cells[52][54] = 1;
         cells[53][50] = cells[53][54] = 1;
         cells[54][50] = cells[54][52] = cells[54][54] = 1;
         break;
-      case '5': // 10 Cell Row
+      case '6': // 10 Cell Row
         cells[50][50] = cells[50][51] = cells[50][52] = cells[50][53] = cells[50][54] = 1;
         cells[50][55] = cells[50][56] = cells[50][57] = cells[50][58] = cells[50][59] = 1;
         break;
-      case '6': // Flower
+      case '7': // Flower
         cells[48][51] = cells[50][50] = cells[50][51] = cells[50][52] = 1;
         break;
-      case '7': // Glider
+      case '8': // Glider
         cells[30][31] = cells[31][32] = cells[32][30] = cells[32][31] = cells[32][32] = 1;
         break;
-      case '8': // Lightweight Spaceship
+      case '9': // Lightweight Spaceship
         cells[50][31] = cells[50][32] = cells[50][33] = cells[50][34] = 1;
         cells[51][30] = cells[51][34] = 1;
         cells[52][34] = 1;
         cells[53][30] = cells[53][33] = 1;
         break;
-      case '9': // The R-pentomino
+      case '10': // The R-pentomino
         cells[54][90] = cells[54][91] = cells[55][89] = cells[55][90] = cells[56][90] = 1;
         break;
-      case '10': // Die Hard
+      case '11': // Die Hard
         cells[39][66] = cells[40][60] = cells[40][61] = cells[41][61] = cells[41][65] = cells[41][66] = cells[41][67] = 1;
         break;
-      case '11': // Acron
+      case '12': // Acron
         cells[54][90] = cells[55][92] = cells[56][89] = cells[56][90] = cells[56][92] = cells[56][93] = cells[56][94] = 1;
         break;
-      case '12': // Gosper's Glider Gun
+      case '13': // Gosper's Glider Gun
         cells[30][64] = 1;
         cells[31][62] = cells[31][64] = 1;
         cells[32][52] = cells[32][53] = cells[32][60] = cells[32][61] = cells[32][74] = cells[32][75] = 1;
@@ -373,18 +395,18 @@ void function(window, document, undefined) {
         cells[37][51] = cells[37][55] = 1;
         cells[38][52] = cells[38][53] = 1;
         break;
-      case '13': // Infinite 1
+      case '14': // Infinite 1
         cells[50][90] = cells[51][88] = cells[51][90] = cells[51][91] = cells[52][88] = cells[52][90] = 1;
         cells[53][88] = cells[54][86] = cells[55][84] = cells[55][86] = 1;
         break;
-      case '14': // Infinite 2
+      case '15': // Infinite 2
         cells[50][90] = cells[50][91] = cells[50][92] = cells[50][94] = 1;
         cells[51][90] = 1;
         cells[52][93] = cells[52][94] = 1;
         cells[53][91] = cells[53][92] = cells[53][94] = 1;
         cells[54][90] = cells[54][92] = cells[54][94] = 1;
         break;
-      case '15': // Infinite 3
+      case '16': // Infinite 3
         cells[50][80] = cells[50][81] = cells[50][82] = cells[50][83] = cells[50][84] = cells[50][85] = cells[50][86] = cells[50][87] = 1;
         cells[50][89] = cells[50][90] = cells[50][91] = cells[50][92] = cells[50][93] = 1;
         cells[50][97] = cells[50][98] = cells[50][99] = 1;
