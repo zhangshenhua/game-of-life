@@ -3,12 +3,9 @@ Conway's Game of Life
 
 > _This is not funny. It's about life and death..._
 
+Conway's Game of Life, written in JavaScript.
 
-**About this repo**
-
-+ Conway's Game of Life, written in JavaScript.
-+ This project is released under the [MIT license](http://opensource.org/licenses/MIT).
-
+http://myst729.github.io/game-of-life/
 
 **About the game**
 
@@ -16,27 +13,9 @@ Conway's Game of Life
 + The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input.
 + One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
 
-
 **Rules of the game**
 
 + Any live cell with fewer than two live neighbours dies, as if caused by under-population.
 + Any live cell with two or three live neighbours lives on to the next generation.
 + Any live cell with more than three live neighbours dies, as if by overcrowding.
 + Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-
-**Read the blog post**
-
-+ Not written yet.
-
-
-**Try out the demo**
-
-+ http://myst729.github.io/game-of-life/
-
-
-**Donation**
-
-+ If you think this project is helpful and would like to thank the author, please [show me the money](http://www.urbandictionary.com/define.php?term=show+me+the+money)!
-
-[![I want a Macbook Pro!](https://img.alipay.com/sys/personalprod/style/mc/btn-index.png)](https://me.alipay.com/myst)
