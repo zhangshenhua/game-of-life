@@ -61,16 +61,22 @@ void function(window, document, undefined) {
     } else {
       var next = [];
       var neighbors;
-
-      for(var i = 0; i < height + 2; i++) {
+      var my_mod = function(x,m) {
+        return (m+x) % m;
+      };
+      for(var i = 0; i < height; i++) {
         next[i] = [];
-        for(var j = 0; j < width + 2; j++) {
-          if(i === 0 || j === 0 || i === height+1 || j === width+1) {
-            next[i][j] = 0; // shim cells
-          } else {
+        for(var j = 0; j < width; j++) {
+        {
             // Get the number of live neighbors (8 neighbors in total).
-            neighbors = cells[i-1][j-1] + cells[i-1][j] + cells[i-1][j+1] + cells[i][j-1] + cells[i][j+1] + cells[i+1][j-1] + cells[i+1][j] + cells[i+1][j+1];
-
+            neighbors = cells[my_mod(i-1, height)][my_mod(j-1, width)] + 
+                        cells[my_mod(i-1, height)][my_mod(j  , width)] + 
+                        cells[my_mod(i-1, height)][my_mod(j+1, width)] + 
+                        cells[my_mod(i  , height)][my_mod(j-1, width)] + 
+                        cells[my_mod(i  , height)][my_mod(j+1, width)] + 
+                        cells[my_mod(i+1, height)][my_mod(j-1, width)] + 
+                        cells[my_mod(i+1, height)][my_mod(j  , width)] + 
+                        cells[my_mod(i+1, height)][my_mod(j+1, width)];
             if(cells[i][j] === 0 && neighbors === 3) {
               // Any dead cell with exactly 3 live neighbors becomes a live cell, as if by reproduction.
               next[i][j] = 1;
@@ -95,8 +101,8 @@ void function(window, document, undefined) {
   var placeCells = function() {
     context.clearRect(0, 0, (size + gap) * width - gap, (size + gap) * height - gap);
 
-    for(var i = 1; i < height + 1; i++) {
-      for(var j = 1; j < width + 1; j++) {
+    for(var i = 0; i < height; i++) {
+      for(var j = 0; j < width; j++) {
         if(cells[i][j] === 1) {
           context.fillRect((size + gap) * (j-1), (size + gap) * (i-1), size, size);
         }

@@ -11,15 +11,29 @@ var onmessage = function(e) {
   var cells = e.data;
   var next = [];
   var neighbors;
+  
+  var my_mod = function(x,m) {
+      return (m+x) % m;
+  }
 
   for(var i = 0, l = cells.length; i < l; i++) {
     next[i] = [];
     for(var j = 0, k = cells[i].length; j < k; j++) {
+      /*
       if(i === 0 || j === 0 || i === l-1 || j === k-1) {
         next[i][j] = 0; // shim cells
-      } else {
+      } else
+      */ 
+      {
         // Get the number of live neighbors (8 neighbors in total).
-        neighbors = cells[i-1][j-1] + cells[i-1][j] + cells[i-1][j+1] + cells[i][j-1] + cells[i][j+1] + cells[i+1][j-1] + cells[i+1][j] + cells[i+1][j+1];
+        neighbors = cells[my_mod(i-1, l)][my_mod(j-1, k)] + 
+                    cells[my_mod(i-1, l)][my_mod(j  , k)] + 
+                    cells[my_mod(i-1, l)][my_mod(j+1, k)] + 
+                    cells[my_mod(i  , l)][my_mod(j-1, k)] + 
+                    cells[my_mod(i  , l)][my_mod(j+1, k)] + 
+                    cells[my_mod(i+1, l)][my_mod(j-1, k)] + 
+                    cells[my_mod(i+1, l)][my_mod(j  , k)] + 
+                    cells[my_mod(i+1, l)][my_mod(j+1, k)];
 
         if(cells[i][j] === 0 && neighbors === 3) {
           // Any dead cell with exactly 3 live neighbors becomes a live cell, as if by reproduction.
